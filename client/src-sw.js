@@ -7,6 +7,14 @@ const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
 
 precacheAndRoute(self.__WB_MANIFEST);
 
+const requestMatch = ({ request }) => {
+  console.log(request);
+  return (
+    request.destination === 'style' ||
+    request.destination === 'script'
+  );
+};
+
 const pageCache = new CacheFirst({
   cacheName: 'page-cache',
   plugins: [
@@ -24,7 +32,16 @@ warmStrategyCache({
   strategy: pageCache,
 });
 
+offlineFallback({
+  offlineFallbackOptions: {
+    pageFallback: '/index.html'
+  }
+});
+
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
 // TODO: Implement asset caching
-registerRoute();
+registerRoute(
+  requestMatch,
+  pageCache
+);
