@@ -4,7 +4,7 @@ const path = require('path');
 const { InjectManifest } = require('workbox-webpack-plugin');
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file. - done??
-// TODO: Add CSS loaders and babel to webpack. 
+// TODO: Add CSS loaders and babel to webpack. done probably
 
 module.exports = () => {
   return {
@@ -30,6 +30,8 @@ module.exports = () => {
       new WebpackPwaManifest({
         name: 'Codr',
         description: 'Easily create and edit scripts from the web and offline with PWA!',
+        start_url: "./",
+        publicPath: './',
         background_color: '#000000',
         display: 'browser',
         icons: [
@@ -49,8 +51,12 @@ module.exports = () => {
           use: ['style-loader', 'css-loader'],
         },
         {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          use: 'asset/resource',
+          test: /\.m?js$/,
+          exclude:/node_modules/,
+          use: {
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime']
+          }
         }
       ],
     },
