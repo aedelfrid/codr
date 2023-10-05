@@ -1,21 +1,37 @@
 import { openDB } from 'idb';
 
 const initdb = async () =>
-  openDB('jate', 1, {
+  openDB('codr', 1, {
     upgrade(db) {
-      if (db.objectStoreNames.contains('jate')) {
-        console.log('jate database already exists');
+      if (db.objectStoreNames.contains('codr')) {
+        console.log('codr database already exists');
         return;
       }
-      db.createObjectStore('jate', { keyPath: 'id', autoIncrement: true });
-      console.log('jate database created');
+      db.createObjectStore('codr', { keyPath: 'id', autoIncrement: true });
+      console.log('codr database created');
     },
   });
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
-export const putDb = async (content) => console.error('putDb not implemented');
 
-// TODO: Add logic for a method that gets all the content from the database
-export const getDb = async () => console.error('getDb not implemented');
+export const putDb = async (content) => {
+  const codrDB = await openDB('codr',1);
+  const tx = codrDB.transaction('codr', 'readwrite');
+  // tx is transaction. doesn't immediately click but makes sense once you realize....
+  const store = tx.objectStore('codr');
+  const req = store.add({ code: content });
+  const result = await req;
+  console.log(result, 'Added data to DB.') 
+};
+
+export const getDb = async () => {
+  const codrDB = await openDB('codr',1);
+  const tx = codrDB.transaction('codr', 'readonly');
+  // tx is transaction. doesn't immediately click but makes sense once you realize....
+  const store = tx.objectStore('codr');
+  const req = store.getAll();
+  const result = await req;
+  console.log(result);
+  return result
+};
 
 initdb();
