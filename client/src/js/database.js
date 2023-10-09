@@ -13,12 +13,12 @@ const initdb = async () =>
   });
 
 
-export const putDb = async (content) => {
+export const putDb = async (id, content) => {
   const codrDB = await openDB('codr',1);
   const tx = codrDB.transaction('codr', 'readwrite');
   // tx is transaction. doesn't immediately click but makes sense once you realize....
   const store = tx.objectStore('codr');
-  const req = store.add({ code: content });
+  const req = store.add({ id, code: content });
   const result = await req;
   console.log(result, 'Added data to DB.') 
 };
@@ -30,8 +30,8 @@ export const getDb = async () => {
   const store = tx.objectStore('codr');
   const req = store.getAll();
   const result = await req;
-  console.log(result);
-  return result
+  console.log(result.value);
+  return result.value;
 };
 
 initdb();
