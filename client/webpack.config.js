@@ -16,29 +16,30 @@ module.exports = () => {
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
+      publicPath: '/',
       clean: true,
     },
     plugins: [
       new HtmlWebpackPlugin({
         template: "./index.html",
-        title: 'HTML Webpack Plugin'
+        title: 'codr'
       }),
       new InjectManifest({
         swSrc: './src-sw.js',
         swDest: 'service-worker.js',
       }),
       new WebpackPwaManifest({
-        name: 'Codr',
+        name: 'codr',
         description: 'Easily create and edit scripts from the web and offline with PWA!',
         start_url: "./",
-        publicPath: './',
         background_color: '#000000',
-        display: 'browser',
+        display: 'standalone',
         icons: [
           {
             src: path.resolve('src/images/logo.png'),
             sizes: [96, 128, 192, 256, 384, 512],
-            destination: path.join('assets', 'icons')
+            destination: path.join('assets', 'icons'),
+            purpose: 'any maskable',
           },
         ]
       })
@@ -49,6 +50,10 @@ module.exports = () => {
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|ico|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
         },
         {
           test: /\.m?js$/,
